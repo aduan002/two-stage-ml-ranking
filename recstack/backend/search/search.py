@@ -1,0 +1,16 @@
+from __future__ import annotations
+from typing import Protocol, Optional, runtime_checkable
+import numpy as np
+
+@runtime_checkable
+class SemanticRetrieval(Protocol):
+    """
+    Behavioral contract for retriever adapters used in the recsys pipeline.
+    Any class with this shape is accepted.
+    """
+    def add(self, embeddings:np.ndarray) -> None: ...
+    def build(self, embeddings:Optional[np.ndarray] = None) -> None: ...
+    def search(self, query:np.ndarray, k:int) -> np.ndarray: ...
+
+    def save(self) -> None: ...
+    def load(self) -> None: ...

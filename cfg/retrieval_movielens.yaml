@@ -1,0 +1,91 @@
+DATA:
+  data_name: movielens 
+  target: target
+
+  movielens:
+    folder_path: data/ml-1m
+    binarize_threshold: 3
+
+    split_strategy: per_user_holdout
+    per_user_holdout:
+      holdout_per_user: 5
+
+PREPROCESS:
+    user:
+      namespace_name: USER
+      primary_key: user_id
+      bags:
+        - {col: user_id, bucket_factor: 32}
+        - {col: gender, bucket_factor: 32}
+        - {col: age, bucket_factor: 32}
+        - {col: occupation, bucket_factor: 32}
+      hash_seed: 1337
+    item:
+      namespace_name: ITEM
+      primary_key: movie_id
+      bags:
+        - {col: movie_id, bucket_factor: 32}
+        - {col: title, bucket_factor: 32}
+        - {col: genres, sep: "|", bucket_factor: 32}
+      hash_seed: 1337
+
+RETRIEVER:
+  user_algorithm_name: user_tower
+  item_algorithm_name: item_tower
+
+  user_tower:
+    ids_embed_dim: 128
+    bag_embed_dim: 64
+    image_embed_dim: 0
+    dropout_p: 0.1
+    normalize: True
+    architecture_config:
+      out_features: [512, 256, 128]
+      activation_functions: [relu, relu, relu]
+  item_tower:
+    ids_embed_dim: 128
+    bag_embed_dim: 64
+    image_embed_dim: 0
+    dropout_p: 0.1
+    normalize: True
+    architecture_config:
+      out_features: [512, 256, 128]
+      activation_functions: [relu, relu, relu]
+
+RERANKER:
+  algorithm_name: uv_reranker
+
+  uv_reranker:
+    architecture_config:
+      out_features: [512, 256, 128]
+      activation_functions: [relu, relu, relu]
+
+
+TRAIN:
+  batch_size: 4096
+  num_workers: 4
+
+  learning_rate: 0.001
+  tau: 0.05
+
+  epochs: 100
+
+METRIC:
+  metric_name: retriever_metrics
+  ks: [1,5,10]
+  benchmark_metric_name: recall@10
+
+# This for building the index
+RETRIEVAL:
+  retriever_name: annoy_retriever
+
+  annoy_retriever:
+    folder_path: artifacts_b4096/movielens
+    distance_metric: dot # cosine because normalized
+    embed_dim: 128
+    n_trees: 1000
+    include_distances: True
+
+SAVE:
+  folder_path: artifacts_b4096
+

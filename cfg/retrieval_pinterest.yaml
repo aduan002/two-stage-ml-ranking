@@ -1,0 +1,81 @@
+DATA:
+  data_name: pinterest 
+  target: target
+
+  pinterest:
+    folder_path: data/pinterest100k-fashion
+    split_strategy: per_user_holdout
+    per_user_holdout:
+      holdout_per_user: 5
+
+
+PREPROCESS:
+    user:
+      namespace_name: SCENE
+      primary_key: scene_id
+      bags:
+        - {col: scene_id, bucket_factor: 32}
+      embeds:
+        - {col: scene_url}
+      hash_seed: 1337
+    item:
+      namespace_name: PRODUCT
+      primary_key: product_id
+      bags:
+        - {col: product_id, bucket_factor: 32}
+        - {col: category, bucket_factor: 32}
+      embeds:
+        - {col: product_url}
+      hash_seed: 1337
+
+RETRIEVER:
+  user_algorithm_name: user_tower
+  item_algorithm_name: item_tower
+
+  user_tower:
+    ids_embed_dim: 128
+    bag_embed_dim: 64
+    image_embed_dim: 512
+    dropout_p: 0.1
+    normalize: True
+    architecture_config:
+      out_features: [512, 256, 128]
+      activation_functions: [relu, relu, relu]
+  item_tower:
+    ids_embed_dim: 128
+    bag_embed_dim: 64
+    image_embed_dim: 512
+    dropout_p: 0.1
+    normalize: True
+    architecture_config:
+      out_features: [512, 256, 128]
+      activation_functions: [relu, relu, relu]
+
+TRAIN:
+  batch_size: 64
+  num_workers: 4
+
+  learning_rate: 0.001
+  tau: 0.07
+
+  epochs: 100
+
+METRIC:
+  metric_name: retriever_metrics
+  ks: [1,5,10]
+  benchmark_metric_name: recall@10
+
+RETRIEVAL:
+  retriever_name: annoy_retriever
+
+  annoy_retriever:
+    folder_path: artifacts_b4096/pinterest
+    distance_metric: dot # cosine because normalized
+    embed_dim: 128
+    n_trees: 1000
+    include_distances: True
+
+
+SAVE:
+  folder_path: artifacts_b4096 
+

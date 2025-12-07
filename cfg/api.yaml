@@ -1,0 +1,48 @@
+SERVE:
+  schema_folder: artifacts_b4096
+  device: "cuda:0"
+  batch_size: 512
+  num_workers: 0
+  top_k: 50
+  preload:
+    - {
+        data_name: movielens, 
+        pipeline_name: base, 
+        version: 1.0.0, 
+        pipeline_cfg: {
+          folder_path: artifacts_b4096,
+          movielens: { folder_path: data/ml-1m, item_primary_key: movie_id},
+          retriever: { user_algorithm_name: user_tower, tau: 0.05,
+            user_tower: {ids_embed_dim: 128, bag_embed_dim: 64, image_embed_dim: 0, dropout_p: 0.1, normalize: True, 
+              architecture_config: {out_features: [512, 256, 128], activation_functions: [relu, relu, relu]}}
+            },
+          retrieval: { retriever_name: annoy_retriever,
+            annoy_retriever: {folder_path: artifacts_b4096/movielens, distance_metric: dot, k: 100, embed_dim: 128, n_trees: 1000, include_distances: True} },  
+          reranker: {
+            algorithm_name: uv_reranker, 
+            uv_reranker: {architecture_config: {out_features: [512, 256, 128], activation_functions: [relu, relu, relu]}} }
+        }
+      }
+    - {
+        data_name: pinterest, 
+        pipeline_name: base, 
+        version: 1.0.0, 
+        pipeline_cfg: {
+          folder_path: artifacts_b4096,
+          pinterest: { folder_path: data/pinterest100k-fashion, item_primary_key: product_id},
+          retriever: { user_algorithm_name: user_tower, tau: 0.07,
+            user_tower: {ids_embed_dim: 128, bag_embed_dim: 64, image_embed_dim: 512, dropout_p: 0.1, normalize: True, 
+              architecture_config: {out_features: [512, 256, 128], activation_functions: [relu, relu, relu]}}
+            },
+          retrieval: { retriever_name: annoy_retriever,
+            annoy_retriever: {folder_path: artifacts_b4096/pinterest, distance_metric: dot, k: 100, embed_dim: 128, n_trees: 1000, include_distances: True} },  
+          reranker: {
+            algorithm_name: uv_reranker, 
+            uv_reranker: {architecture_config: {out_features: [1024, 512, 256], activation_functions: [relu, relu, relu]}} }
+        }
+      }
+
+  cache:
+    max_loaded_models: 3      # LRU upper bound
+    ttl_s: 1800               # Evict if untouched for 30 min
+    gpu_mem_cap_mb: 40000     # Soft cap. Refuse load if exceeded
