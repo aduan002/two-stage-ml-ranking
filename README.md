@@ -181,10 +181,8 @@ rather than a production UI. It demonstrates:
 
 The goal is to validate the **end-to-end serving pipeline**, not to showcase UI/UX design.
 
-<video width="100%" controls>
-  <source src="assets/streamlit_pinterest_demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<img src="https://github.com/user-attachments/assets/6afc908d-f962-4a1b-bd15-7a54092a849e" alt="Pinterest demo">
+
 ---
 
 ## Project Structure
