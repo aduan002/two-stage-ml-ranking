@@ -115,6 +115,7 @@ The same pipeline works for **MovieLens (tabular)** and **Pinterest-like (image)
     - TTL
     - GPU memory cap
 - Endpoints:
+
 | Method | Endpoint        | Description                                         |
 |--------|------------------|-----------------------------------------------------|
 | GET    | `/healthz`       | Basic health check.                                 |
