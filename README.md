@@ -41,7 +41,7 @@ This project implements a **two-stage recommender system**:
 
 The same pipeline works for **MovieLens (tabular)** and **Pinterest-like (image)** datasets by plugging in different configs + preprocessors.
 
-<img src="assets/recstack_diagram.png" width="50%">
+<img src="assets/recstack_diagram.png" width="60%">
 
 ---
 
@@ -182,7 +182,7 @@ rather than a production UI. It demonstrates:
 
 The goal is to validate the **end-to-end serving pipeline**, not to showcase UI/UX design.
 
-![Pinterest Demo](/assets/streamlit_pinterest_demo.gif)
+<img src="/assets/streamlit_pinterest_demo.gif" width="80%">
 
 ---
 
