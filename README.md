@@ -41,7 +41,8 @@ This project implements a **two-stage recommender system**:
 
 The same pipeline works for **MovieLens (tabular)** and **Pinterest-like (image)** datasets by plugging in different configs + preprocessors.
 
-![High-level architecture diagram](/assets/recstack_diagram.png)
+<img src="assets/recstack_diagram.png" width="50%">
+
 ---
 
 ## Architecture
